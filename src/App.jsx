@@ -6,6 +6,8 @@ import BooksPage from './pages/BooksPage'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import ContactPage from './pages/ContactPage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
         <Route path="/Books/:id" element={<BooksDetailsPage/>} />
         <Route path="/Contact" element={<ContactPage/>} />
         <Route path="*" element={<NotFoundPage/>} />
+        <Route path='/Login' element={<LoginPage/>} />
+        <Route path='/Register' element={<RegisterPage/>} />
       </Routes>
     </>
   )
