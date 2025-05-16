@@ -62,7 +62,7 @@ export default function Books() {
             
             <div className="row">
                 {
-                    books.map((data)=> <Book key={data.id}  dataBook={data} /> )
+                    books.map((data)=> <Book key={data.codlibro}  dataBook={data} /> )
                 }
             </div>
         </div>        
