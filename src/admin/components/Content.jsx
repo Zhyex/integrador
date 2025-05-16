@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from './header'
-import Footer from '../../components/Footer'
+import FooterAdmin from './FooterAdmin'
 
 export default function Content() {
   return (
@@ -17,7 +17,7 @@ export default function Content() {
                         </a>
                     </div>
                 </div>
-                <Footer/>
+                <FooterAdmin/>
             </div>
         </div>
     </>
