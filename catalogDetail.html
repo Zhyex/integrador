@@ -78,21 +78,19 @@
       <div class="col-md-6">
         <h2 class="fw-bold">La orquesta imaginaria</h2>
         <p class="text-muted mb-1">SKU: 0001</p>
-        <h4 class="text-muted">$120.00</h4>
-
         <!-- Control de cantidad -->
         <div class="mb-3">
           <label for="cantidad" class="form-label">Cantidad *</label>
           <div class="input-group" style="width: 150px;">
             <button class="btn btn-outline-secondary" type="button">−</button>
-            <input type="number" class="form-control text-center" id="cantidad" value="1" min="1">
+            <input type="number" class="form-control text-center" id="cantidad" value="1" min="1" max="1">
             <button class="btn btn-outline-secondary" type="button">+</button>
           </div>
         </div>
 
         <!-- Botón de añadir al carrito -->
         <div class="d-grid mb-4" style="max-width: 200px;">
-          <button class="btn btn-outline-danger">Añadir al carrito</button>
+          <button class="btn btn-outline-danger">Agregar para préstamo</button>
         </div>
 
         <!-- Acordeón para más detalles -->
@@ -100,36 +98,39 @@
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingInfo">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#infoProducto" aria-expanded="true">
-                Información del producto
+                Información
               </button>
             </h2>
             <div id="infoProducto" class="accordion-collapse collapse show" data-bs-parent="#accordionDetalles">
               <div class="accordion-body">
-                Detalle del producto. Lugar ideal para agregar más información sobre tu producto como su tamaño, materiales, instrucciones de uso y mantenimiento. También es un buen espacio para explicar lo especial que es tu producto y sus beneficios.
+                Se entrega en buen estado, con tarjeta de historial del libro
               </div>
             </div>
           </div>
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingPolitica">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#politicaReembolso">
-                Política de devolución y reembolso
+                Política de garantía
               </button>
             </h2>
             <div id="politicaReembolso" class="accordion-collapse collapse" data-bs-parent="#accordionDetalles">
               <div class="accordion-body">
-                Aquí puedes colocar tu política de devoluciones y reembolsos.
+                <ul>
+                  <li>Se presta por un máximo de 15 días calendario.</li>
+                  <li>Se cobra una multa acumulable por cada día de demora posterior a la fecha de fin de préstamo.</li>
+                </ul>            
               </div>
             </div>
           </div>
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingEnvio">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#infoEnvio">
-                Información de envío
+                Recolección de libro
               </button>
             </h2>
             <div id="infoEnvio" class="accordion-collapse collapse" data-bs-parent="#accordionDetalles">
               <div class="accordion-body">
-                Detalles sobre métodos de envío, tiempos estimados y costos.
+                Se debe retornar el libro únicamente por la persona que solicitó el préstamo.
               </div>
             </div>
           </div>
