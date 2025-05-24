@@ -42,7 +42,7 @@ export default function Menu() {
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link className="nav-link" to="./loginUser.html">Ingresar</Link>
+                        <Link className="nav-link" to="/Login">Ingresar</Link>
                       </li>
                     </ul>
                   </div>
