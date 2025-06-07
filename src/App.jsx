@@ -28,6 +28,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage/>}/>
         <Route path="/Create" element={<CreateProduct/>}/>
+        <Route path="/editar/:codlibro" element={<CreateProduct />} />
         <Route path="/List" element={<ProductList/>}/>
         <Route path="/About" element={<AboutPage/>} />
         <Route path="/Books" element={<BooksPage/>} />

@@ -1,17 +1,29 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function Aside() {
   const [isProductosOpen, setIsProductosOpen] = useState(false)
+  const navigate = useNavigate()
 
   const toggleProductos = () => {
     setIsProductosOpen(prev => !prev)
   }
 
+  const handleLogout = () => {
+    if (window.confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+      // Limpiar localStorage usando la misma lógica de tu App
+      localStorage.removeItem('auth');
+      localStorage.removeItem('tipousuario');
+      
+      // Forzar redirección y recarga de la página
+      window.location.href = '/';
+    }
+  }
+
   return (
     <>
       <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
+        
         {/* Sidebar - Brand */}
         <Link className="sidebar-brand d-flex align-items-center justify-content-center" to="/Dashboard">
           <div className="sidebar-brand-icon rotate-n-15">
@@ -46,7 +58,6 @@ export default function Aside() {
           >
             <i className="fas fa-fw fa-cog"></i>
             <span className="ms-2">Productos</span>
-            <i className={`fas fa-chevron-${isProductosOpen ? 'up' : 'down'} ms-auto`}></i>
           </button>
           <div
             id="collapseProductos"
@@ -63,10 +74,18 @@ export default function Aside() {
 
         <hr className="sidebar-divider" />
 
-        <div className="text-center d-none d-md-inline">
-          <button className="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
-
+        {/* Logout Button */}
+        <li className="nav-item">
+          <button
+            type="button"
+            className="nav-link btn btn-link d-flex align-items-center"
+            onClick={handleLogout}
+            style={{ width: '100%', textAlign: 'left', color: 'inherit', padding: '0.75rem 1rem', border: 'none', background: 'none' }}
+          >
+            <i className="fas fa-fw fa-sign-out-alt"></i>
+            <span className="ms-2">Cerrar Sesión</span>
+          </button>
+        </li>
       </ul>
     </>
   )

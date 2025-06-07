@@ -1,71 +1,57 @@
-import React from 'react'
+// components/Books.jsx
+import React, { useState, useEffect } from 'react';
 import Book from './Book';
 
-
-let books = [
-    {
-        "codlibro":1,
-        "nomlibro": "The imaginary orchestra",
-        "genero": "Fantasy",
-        "autor" : "Jamie Olsen",
-        "url": "https://static.wixstatic.com/media/84770f_48ec2015a53d4179b24873f33cf430d1~mv2_d_2005_2621_s_2.jpg/v1/fill/w_275,h_367,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/84770f_48ec2015a53d4179b24873f33cf430d1~mv2_d_2005_2621_s_2.jpg",
-        "activo": "SI",
-    },
-    {
-        "codlibro":2,
-        "nomlibro": "Little House Big House",
-        "genero": "Fantasy",
-        "autor" : "Jamie Olsen",
-        "url": "https://static.wixstatic.com/media/84770f_8567019db8124aeaba9804c88de1311d~mv2_d_2005_2621_s_2.jpg/v1/fill/w_275,h_367,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/84770f_8567019db8124aeaba9804c88de1311d~mv2_d_2005_2621_s_2.jpg",
-        "activo": "SI",
-    },
-    {
-        "codlibro":3,
-        "nomlibro": "Fish Tales",
-        "genero": "Fantasy",
-        "autor" : "Jamie Olsen",
-        "url": "https://static.wixstatic.com/media/ea26fd_d52240743f114a90930b289be3fc3116~mv2_d_2005_2621_s_2.jpg/v1/fill/w_275,h_367,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/ea26fd_d52240743f114a90930b289be3fc3116~mv2_d_2005_2621_s_2.jpg",
-        "activo": "SI",
-    },{
-        "codlibro":4,
-        "nomlibro": "The Way to Magic Land",
-        "genero": "Fantasy",
-        "autor" : "Jamie Olsen",
-        "url": "https://static.wixstatic.com/media/84770f_9cb6abe2c4b4461d9e756ec51dfa06dd~mv2_d_2005_2621_s_2.jpg/v1/fill/w_275,h_367,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/84770f_9cb6abe2c4b4461d9e756ec51dfa06dd~mv2_d_2005_2621_s_2.jpg",
-        "activo": "SI",
-    },
-    {
-        "codlibro":5,
-        "nomlibro": "The missing snowman",
-        "genero": "Fantasy",
-        "autor" : "Jamie Olsen",
-        "url": "https://static.wixstatic.com/media/84770f_abfde58fdf154278bb926af1cd8d0d10~mv2_d_2005_2621_s_2.jpg/v1/fill/w_275,h_367,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/84770f_abfde58fdf154278bb926af1cd8d0d10~mv2_d_2005_2621_s_2.jpg",
-        "activo": "SI",
-    },
-    {
-        "codlibro":6,
-        "nomlibro": "My ocean tree",
-        "genero": "Fantasy",
-        "autor" : "Jamie Olsen",
-        "url": "https://static.wixstatic.com/media/84770f_0166a659f6884377b83c2920dc8b0b56~mv2_d_2005_2621_s_2.jpg/v1/fill/w_275,h_367,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/84770f_0166a659f6884377b83c2920dc8b0b56~mv2_d_2005_2621_s_2.jpg",
-        "activo": "SI",
-    },
-];
-
 export default function Books() {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/libros');
+        if (!response.ok) throw new Error('Error al cargar los libros');
+
+        const data = await response.json();
+        setBooks(data);
+        setError(null);
+      } catch (error) {
+        console.error('Error:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container my-5 text-center">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-3">Cargando libros...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container my-5 text-center">
+        <div className="alert alert-danger">{error}</div>
+      </div>
+    );
+  }
+
   return (
-    <>
-        <div className="container my-5">
-            <h2 className="text-center mb-5 fw-bold">
-                <span>Más libros de la aventura de Zoomie</span>
-            </h2>
-            
-            <div className="row">
-                {
-                    books.map((data)=> <Book key={data.codlibro}  dataBook={data} /> )
-                }
-            </div>
-        </div>        
-    </>
-  )
+    <div className="container my-5">
+      <h2 className="text-center mb-5 fw-bold">Catálogo de Libros</h2>
+      <div className="row">
+        {books.map((data) => (
+          <Book key={data.codlibro} dataBook={data} />
+        ))}
+      </div>
+    </div>
+  );
 }

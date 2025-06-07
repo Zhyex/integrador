@@ -1,8 +1,96 @@
-import React from 'react';
-import Aside from './Aside'; // Asegúrate de importar tu componente Aside
-import Content from './Content'; // Si lo usas al final del layout
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Aside from './Aside';
 
 function CreateProduct() {
+  const { codlibro } = useParams(); // Si existe, estamos en modo edición
+  const isEditMode = Boolean(codlibro);
+  const navigate = useNavigate();
+
+  const [nomlibro, setNomlibro] = useState('');
+  const [genero, setGenero] = useState('');
+  const [autor, setAutor] = useState('');
+  const [url, setUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [mensaje, setMensaje] = useState(null);
+
+  // Cargar libro si estamos en modo edición
+  useEffect(() => {
+    const cargarLibro = async () => {
+      if (!isEditMode) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3000/libros/id/${codlibro}`);
+        if (!response.ok) throw new Error('Error al cargar el libro');
+        const data = await response.json();
+        setNomlibro(data.nomlibro || '');
+        setGenero(data.genero || '');
+        setAutor(data.autor || '');
+        setUrl(data.url || '');
+      } catch (error) {
+        setMensaje(`Error: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarLibro();
+  }, [codlibro, isEditMode]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!nomlibro || !genero || !autor || !url) {
+      setMensaje('Por favor, completa todos los campos.');
+      return;
+    }
+
+    setLoading(true);
+    setMensaje(null);
+
+    try {
+      const method = isEditMode ? 'PUT' : 'POST';
+      const endpoint = isEditMode
+        ? `http://localhost:3000/libros/${codlibro}`
+        : 'http://localhost:3000/libros';
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nomlibro,
+          genero,
+          autor,
+          url,
+          activo: 'SI',
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al guardar el libro');
+      }
+
+      setMensaje(isEditMode ? 'Libro actualizado con éxito.' : 'Libro guardado con éxito.');
+
+      if (isEditMode) {
+        // Redirigir al dashboard tras editar
+        setTimeout(() => navigate('/'), 1000);
+      } else {
+        // Limpiar formulario si es nuevo
+        setNomlibro('');
+        setGenero('');
+        setAutor('');
+        setUrl('');
+      }
+    } catch (error) {
+      setMensaje(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div id="page-top">
       <div id="wrapper">
@@ -11,74 +99,143 @@ function CreateProduct() {
         <div className="d-flex flex-column" id="content-wrapper">
           <div id="content">
             <div className="container-fluid px-4">
-              <h1 className="h3 mb-4 text-gray-800">Registrar Libro</h1>
+              <h1 className="h3 mb-4 text-gray-800">
+                {isEditMode ? 'Editar Libro' : 'Registrar Libro'}
+              </h1>
 
               <div className="card shadow mb-4">
                 <div className="card-body">
                   <div className="row">
                     {/* Formulario */}
                     <div className="col-md-7">
-                      <form>
-                        {/* Select de libros */}
+                      <form onSubmit={handleSubmit}>
+                        {/* Nombre del libro */}
                         <div className="form-outline mb-4">
-                          <label className="form-label" htmlFor="productos-select">
-                            Libros
+                          <label className="form-label" htmlFor="nombre-libro">
+                            Nombre del libro
                           </label>
-                          <select id="productos-select" className="form-select">
-                            <option defaultValue>Seleccionar un libro</option>
-                            <option value="Hamburguesa">Seguimos, seguimos no paramos</option>
-                            <option value="Picada">Picantes y amorosos</option>
-                            <option value="Pasta">Empedernidos en un mundo loco</option>
-                            <option value="Perro">Perros rabiosos por la sociedad</option>
-                            <option value="Sanchipapa">Santos y más santos</option>
-                            <option value="Chuzo">Chuzo pa Jossy con tanta tarea</option>
-                            <option value="Pizza">Puños y revueltas por el Jossy cansón</option>
-                            <option value="Pollo">Lord Jossy</option>
-                            <option value="Tacos">Aprende con Jossy el eficiente</option>
-                            <option value="Burrito">Burros los que prefieren Python y Java</option>
-                          </select>
+                          <input
+                            type="text"
+                            id="nombre-libro"
+                            className="form-control"
+                            value={nomlibro}
+                            onChange={(e) => setNomlibro(e.target.value)}
+                            placeholder="Escribe el nombre del libro"
+                            required
+                          />
                         </div>
 
-                        {/* Precio input */}
+                        {/* Género */}
                         <div className="form-outline mb-4">
-                          <label className="form-label" htmlFor="precio-pro">Precio</label>
-                          <input type="number" id="precio-pro" className="form-control" />
+                          <label className="form-label" htmlFor="genero-libro">
+                            Género
+                          </label>
+                          <input
+                            type="text"
+                            id="genero-libro"
+                            className="form-control"
+                            value={genero}
+                            onChange={(e) => setGenero(e.target.value)}
+                            placeholder="Ejemplo: Ciencia ficción, Fantasía"
+                            required
+                          />
                         </div>
 
-                        {/* Stock input */}
+                        {/* Autor */}
                         <div className="form-outline mb-4">
-                          <label className="form-label" htmlFor="form6Example6">Stock</label>
-                          <input type="number" id="form6Example6" className="form-control" />
+                          <label className="form-label" htmlFor="autor-libro">
+                            Autor
+                          </label>
+                          <input
+                            type="text"
+                            id="autor-libro"
+                            className="form-control"
+                            value={autor}
+                            onChange={(e) => setAutor(e.target.value)}
+                            placeholder="Nombre del autor"
+                            required
+                          />
                         </div>
 
-                        {/* Descripción textarea */}
+                        {/* URL Imagen */}
                         <div className="form-outline mb-4">
-                          <label className="form-label" htmlFor="form6Example7">Descripción</label>
-                          <textarea className="form-control" id="form6Example7" rows="4"></textarea>
+                          <label className="form-label" htmlFor="url-libro">
+                            URL de la imagen
+                          </label>
+                          <input
+                            type="url"
+                            id="url-libro"
+                            className="form-control"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                            placeholder="https://ejemplo.com/imagen.jpg"
+                            required
+                          />
                         </div>
 
-                        {/* Botón */}
-                        <button type="button" className="btn btn-primary btn-block">
-                          Guardar libro
+                        {mensaje && (
+                          <div
+                            className={`alert ${
+                              mensaje.startsWith('Error')
+                                ? 'alert-danger'
+                                : 'alert-success'
+                            }`}
+                            role="alert"
+                          >
+                            {mensaje}
+                          </div>
+                        )}
+
+                        <button
+                          type="submit"
+                          className="btn btn-primary btn-block"
+                          disabled={loading}
+                        >
+                          {loading
+                            ? 'Guardando...'
+                            : isEditMode
+                            ? 'Actualizar libro'
+                            : 'Guardar libro'}
                         </button>
                       </form>
                     </div>
 
-                    {/* Imagen */}
-                    <div className="col-md-5 d-flex align-items-center">
-                      <img
-                        id="imagen-pro"
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjGS0gRXSA0JUkZ6PtRkLkw9L5YPxEqQ21bw&s"
-                        className="img-fluid rounded shadow-sm"
-                        alt="Vista previa del libro"
-                      />
+                    {/* Imagen preview */}
+                    <div className="col-md-5 d-flex align-items-center justify-content-center">
+                      {url ? (
+                        <img
+                          id="imagen-pro"
+                          src={url}
+                          className="img-fluid rounded shadow-sm"
+                          alt="Vista previa del libro"
+                          style={{ maxHeight: '300px' }}
+                          onError={(e) => {
+                            e.target.src =
+                              'https://via.placeholder.com/300x400?text=Imagen+no+disponible';
+                          }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: '300px',
+                            height: '400px',
+                            backgroundColor: '#eee',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#aaa',
+                            borderRadius: '8px',
+                          }}
+                        >
+                          Vista previa de la imagen
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
           {/* <Content /> */}
         </div>
       </div>
