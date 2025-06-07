@@ -76,7 +76,7 @@ function CreateProduct() {
 
       if (isEditMode) {
         // Redirigir al dashboard tras editar
-        setTimeout(() => navigate('/'), 1000);
+        setTimeout(() => navigate('/List'), 1000);
       } else {
         // Limpiar formulario si es nuevo
         setNomlibro('');
